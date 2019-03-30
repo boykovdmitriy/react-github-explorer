@@ -1,0 +1,7 @@
+.home {
+    background: blue;
+}
+
+.home__item {
+    border: 1px solid green;
+}
