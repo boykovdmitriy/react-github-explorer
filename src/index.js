@@ -7,7 +7,7 @@ import {App} from './containers/app';
 import rootSaga from './redux/rootSaga';
 import {configureStore} from './redux';
 import history from './utils/history';
-import './index.css';
+import './index.scss';
 
 const supportsHistory = 'pushState' in window.history;
 const store = configureStore();

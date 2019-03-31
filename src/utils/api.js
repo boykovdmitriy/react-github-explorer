@@ -1,6 +1,4 @@
-import _ from 'lodash';
-
-const FETCH_TIMEOUT = 20000;
+const FETCH_TIMEOUT = 10000;
 
 function parseJSON(response) {
   return response
@@ -35,13 +33,8 @@ function timeoutPromise(timeout, err, promise) {
 export function apiFetch(path, customOptions) {
   const { apiHost, ...options } = customOptions;
   const fetchUrl = `${apiHost || ''}/${path}`;
-  const isFormData = Object.prototype.toString.call(options.body) === '[object FormData]';
   options.headers = options.headers || new Headers();
   options.headers.append('Accept', 'application/json, text/plain, */*');
-  if (!isFormData && !_.isEmpty(options.body)) {
-    options.headers.append('Content-Type', 'application/json');
-    options.body = JSON.stringify(options.body);
-  }
   return timeoutPromise(
     FETCH_TIMEOUT,
     // @ts-ignore: ts offers to import Error from material UI, but it's wrong

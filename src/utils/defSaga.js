@@ -3,7 +3,6 @@ import {
 } from 'redux-saga/effects';
 import * as _ from 'lodash';
 import { apiFetch } from './api';
-import { toFormData } from './formData';
 
 const GET = 'GET';
 
@@ -15,10 +14,7 @@ export function buildFetch(
 ) {
   return function* fetchRequest(action) {
     const {payload} = action;
-    const {
-      isFormData, ...restPayload
-    } = payload;
-    const baseResultPayload = { requestParams: restPayload};
+    const baseResultPayload = { requestParams: payload};
     const baseUrl = _.isFunction(url) ? url(payload) : url;
     const {reqUrl, params} =  method === 'GET'
       ? {
@@ -29,7 +25,7 @@ export function buildFetch(
       params: {
         method,
         apiHost,
-        body: isFormData ? toFormData(restPayload) : restPayload,
+        body: payload,
       },
     };
 

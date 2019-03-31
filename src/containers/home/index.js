@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
-import './home.css';
+import './home.scss';
 import {applicationsActions} from '../../redux/applications';
 
 const mapStateToProps = (state) => ({
