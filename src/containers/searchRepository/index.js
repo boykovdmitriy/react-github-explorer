@@ -5,6 +5,7 @@ import './searchRepository.scss';
 import {Input} from '../../components/input';
 import {Button} from '../../components/button';
 import {repositoriesActions} from '../../redux/repositories';
+import {RepositoryItem} from './repositoryItem';
 
 const mapStateToProps = (state) => ({
   repositoriesSearchResponse: state.repositories,
@@ -39,6 +40,7 @@ class SearchRepositoryContainer extends React.PureComponent {
 
   render() {
     const {query} = this.state;
+    const {repositoriesSearchResponse: {isLoading, data: {items = []}}} = this.props;
     return (
       <section>
         <section>
@@ -48,6 +50,12 @@ class SearchRepositoryContainer extends React.PureComponent {
             value={query}
           />
           <Button>search</Button>
+        </section>
+        <section>
+          {isLoading && 'loading'}
+          {
+            items.map(x => <RepositoryItem key={x.id} repository={x}/>)
+          }
         </section>
       </section>
     );
