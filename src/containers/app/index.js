@@ -14,6 +14,7 @@ export class App extends Component {
         <Switch>
           <Route
             path={ROOT.url()}
+            exact
             component={SearchRepository}
           />
           <Route

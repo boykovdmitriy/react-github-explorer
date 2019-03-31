@@ -1,6 +1,6 @@
 import {repositoriesActions} from './repositories.actions';
 
-const initialState = {
+const initialObjectState = {
   error: '',
   isError: false,
   isLoading: false,
@@ -9,7 +9,16 @@ const initialState = {
   data: {},
 };
 
-export const repositoriesReducer = (state = initialState, action) => {
+const initialArrayState = {
+  error: '',
+  isError: false,
+  isLoading: false,
+  isLoaded: false,
+  loadedPages: 0,
+  data: [],
+};
+
+export const searchRepositoriesReducer = (state = initialObjectState, action) => {
   switch (action.type) {
     case repositoriesActions.SEARCH_REPOSITORY.REQUEST:
       const {payload: {params}} = action;
@@ -42,3 +51,78 @@ export const repositoriesReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+export const indexRepositoryIssuesReducer = (state = initialArrayState, action) => {
+  switch (action.type) {
+    case repositoriesActions.GET_REPOSITORY_ISSUES.REQUEST:
+      const {payload: {params}} = action;
+      return {
+        ...state,
+        params: params,
+        isError: false,
+        isLoading: true,
+        isLoaded: false,
+      };
+    case repositoriesActions.GET_REPOSITORY_ISSUES.SUCCESS:
+      const links = action.payload.raw.headers.get('Link');
+      return {
+        ...state,
+        data: action.payload.data,
+        totalPage: calculateTotal(links),
+        isError: false,
+        isLoading: false,
+        isLoaded: true,
+      };
+    case repositoriesActions.GET_REPOSITORY_ISSUES.FAILURE:
+      return {
+        ...state,
+        isError: true,
+        error: action.payload,
+        isLoading: false,
+      };
+    default:
+      return state;
+  }
+};
+
+export const indexAssignedPersonsReducer = (state = initialArrayState, action) => {
+  switch (action.type) {
+    case repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.REQUEST:
+      const {payload: {params}} = action;
+      return {
+        ...state,
+        params: params,
+        isError: false,
+        isLoading: true,
+        isLoaded: false,
+      };
+    case repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.SUCCESS:
+      const links = action.payload.raw.headers.get('Link');
+      return {
+        ...state,
+        data: action.payload.data,
+        totalPage: calculateTotal(links),
+        isError: false,
+        isLoading: false,
+        isLoaded: true,
+      };
+    case repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.FAILURE:
+      return {
+        ...state,
+        isError: true,
+        error: action.payload,
+        isLoading: false,
+      };
+    default:
+      return state;
+  }
+};
+
+function calculateTotal(links) {
+  if (!links) return 1;
+
+  const totals = links
+    .split(',')
+    .map(s => s.substring(s.indexOf('='), s.indexOf('>')).replace('=', ''));
+  return parseInt(totals[totals.length - 1], 10);
+}

@@ -1,9 +1,10 @@
 import {combineReducers} from 'redux';
 import {applicationsReducer} from './applications';
-import {repositoriesReducer} from './repositories';
+import {searchRepositoriesReducer, indexRepositoryIssuesReducer, indexAssignedPersonsReducer} from './repositories';
 
 export default combineReducers({
   applications: applicationsReducer,
-  repositories: repositoriesReducer,
-
+  searchRepositories: searchRepositoriesReducer,
+  indexAssignedPersons: indexAssignedPersonsReducer,
+  indexRepositoryIssues: indexRepositoryIssuesReducer,
 });

@@ -5,8 +5,8 @@ import {toParams} from '../../utils/params';
 
 export const urls = {
   index: (payload) => `search/repositories${toParams(payload.params)}`,
-  getRepositoryIssues: ({owner, repo, params}) => `/repos/${owner}/${repo}/issues${toParams(params)}`,
-  getAssignedToRRepositoryIssuesRepositoryIssues: ({owner, repo}) => `/repos/${owner}/${repo}/assignees`,
+  getRepositoryIssues: ({owner, repo, params}) => `repos/${owner}/${repo}/issues${toParams(params)}`,
+  getAssignedToRRepositoryIssuesRepositoryIssues: ({owner, repo}) => `repos/${owner}/${repo}/assignees`,
 };
 
 export function* repositoriesSaga() {

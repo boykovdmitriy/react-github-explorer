@@ -8,7 +8,7 @@ import {repositoriesActions} from '../../redux/repositories';
 import {RepositoryItem} from './repositoryItem';
 
 const mapStateToProps = (state) => ({
-  repositoriesSearchResponse: state.repositories,
+  repositoriesSearchResponse: state.searchRepositories,
 });
 
 const mapDispatchToProps = {
@@ -18,7 +18,6 @@ const mapDispatchToProps = {
 class SearchRepositoryContainer extends React.PureComponent {
   constructor(props) {
     super(props);
-
     this.throttledFetchRepositories = debounce(this.fetchRepositories, 600);
     this.state = {
       query: '',
