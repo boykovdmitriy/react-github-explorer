@@ -1,4 +1,4 @@
-import { repositoriesActions } from './repositories.actions';
+import {repositoriesActions} from './repositories.actions';
 
 const initialState = {
   error: '',
@@ -11,23 +11,27 @@ const initialState = {
 
 export const repositoriesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case repositoriesActions.FAKE.REQUEST:
+    case repositoriesActions.SEARCH_REPOSITORY.REQUEST:
+      const {payload: {params}} = action;
       return {
         ...state,
-        data: {},
+        params: params,
         isError: false,
         isLoading: true,
         isLoaded: false,
       };
-    case repositoriesActions.FAKE.SUCCESS:
+    case repositoriesActions.SEARCH_REPOSITORY.SUCCESS:
+      const {payload: {data}} = action;
+
       return {
         ...state,
         data: action.payload.data,
+        totalPage: Math.ceil(data.total_count / 30),
         isError: false,
         isLoading: false,
         isLoaded: true,
       };
-    case repositoriesActions.FAKE.FAILURE:
+    case repositoriesActions.SEARCH_REPOSITORY.FAILURE:
       return {
         ...state,
         isError: true,

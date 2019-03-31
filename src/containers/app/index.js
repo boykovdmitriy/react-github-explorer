@@ -1,28 +1,25 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {Route, Switch} from 'react-router-dom';
+
+import {ROOT, REPOSITORY_ISSUES} from '../../routes';
+import {Issues} from '../issues';
+import {SearchRepository} from '../searchRepository';
 import './app.scss';
-import {Link, Redirect, Route, Switch} from 'react-router-dom';
-import {ABOUT_US, HOME, ROOT} from '../../routes';
-import {Home} from '../home';
-import {AboutUs} from '../aboutUs';
+
 
 export class App extends Component {
   render() {
     return (
       <div className="app">
-        <header>
-          <Link to={HOME.url()}>Home</Link>
-          <Link to={ABOUT_US.url()}>About us</Link>
-        </header>
         <Switch>
           <Route
-            path={HOME.url()}
-            component={Home}
+            path={ROOT.url()}
+            component={SearchRepository}
           />
           <Route
-            component={AboutUs}
-            path={ABOUT_US.url()}
+            component={Issues}
+            path={REPOSITORY_ISSUES.url()}
           />
-          <Redirect from={ROOT.url()} to={HOME.url()}/>
         </Switch>
       </div>
     );

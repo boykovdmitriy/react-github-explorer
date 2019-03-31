@@ -10,6 +10,4 @@ export function defRoute(pattern) {
 }
 
 export const ROOT = defRoute('/');
-export const HOME = defRoute(joinUrlParts(ROOT.pattern, 'home'));
-export const HOME_ITEM = defRoute(joinUrlParts(ROOT.pattern, 'home/:itemId'));
-export const ABOUT_US = defRoute(joinUrlParts(ROOT.pattern, 'about-us'));
+export const REPOSITORY_ISSUES = defRoute(joinUrlParts(ROOT.pattern, ':owner/:repo/issues'));
