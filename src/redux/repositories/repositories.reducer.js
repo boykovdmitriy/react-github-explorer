@@ -57,6 +57,7 @@ export const indexRepositoryIssuesReducer = (state = initialArrayState, action) 
       const {payload: {params}} = action;
       return {
         ...state,
+        data: params.page === 1 ? [] : state.data,
         params: params,
         isError: false,
         isLoading: true,
@@ -66,7 +67,7 @@ export const indexRepositoryIssuesReducer = (state = initialArrayState, action) 
       const links = action.payload.raw.headers.get('Link');
       return {
         ...state,
-        data: action.payload.data,
+        data: [...state.data, ...action.payload.data],
         totalPages: calculateTotal(links),
         isError: false,
         isLoading: false,
@@ -120,8 +121,11 @@ export const indexAssignedPersonsReducer = (state = initialArrayState, action) =
 function calculateTotal(links) {
   if (!links) return 1;
 
-  const totals = links
-    .split(',')
-    .map(s => s.substring(s.indexOf('='), s.indexOf('>')).replace('=', ''));
-  return parseInt(totals[totals.length - 1], 10);
+  const parts = links.split(',');
+  const lastLink = parts.find(x => x.includes('rel="last"'));
+  const total = lastLink.substring(
+    lastLink.indexOf('='),
+    lastLink.indexOf('>'))
+    .replace('=', '');
+  return parseInt(total, 10);
 }

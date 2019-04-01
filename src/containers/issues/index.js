@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {repositoriesActions} from '../../redux/repositories';
 import {ROOT} from '../../routes';
 import './issues.scss';
@@ -28,33 +29,28 @@ export class IssuesContainer extends React.PureComponent {
     fetchIssues({owner, repo, params: {page: 1}});
   }
 
-  filterListByAssignee = (assignee) => {
+  filterListByAssignee = (assignee, page) => {
     const {match: {params: {owner, repo}}, fetchIssues} = this.props;
     if (assignee) {
       fetchIssues({
         owner,
         repo,
         params: {
-          page: 1,
+          page,
           assignee: assignee && assignee.login
         }
       });
       return;
     }
-    fetchIssues({
-      owner,
-      repo,
-      params: {
-        page: 1,
-      }
-    });
+    fetchIssues({owner, repo, params: {page}});
   };
 
   handleSelect = (assignee) => {
     this.setState({
       selectedAssignee: assignee,
     }, () => {
-      this.filterListByAssignee(assignee);
+      const {repositoryIssuesResponse: {params: {page}}} = this.props;
+      this.filterListByAssignee(assignee, page + 1);
     });
   };
 
@@ -69,23 +65,36 @@ export class IssuesContainer extends React.PureComponent {
     });
   };
 
+  handleLoadRepositoryIssues = () => {
+    const {selectedAssignee} = this.props;
+    const {repositoryIssuesResponse: {params: {page}}} = this.props;
+
+    this.filterListByAssignee(selectedAssignee, page + 1);
+  };
+
+  hasMore = (storeField) => {
+    const {
+      params: {
+        page = {page: 1}
+      },
+      totalPages,
+    } = storeField;
+
+    return page < totalPages;
+  };
+
   render() {
     const {
       match: {
         params: {repo}
       },
       assignedPersonsResponse,
-      assignedPersonsResponse: {
-        params: {
-          page = {page: 1}
-        },
-        totalPage,
-      },
       repositoryIssuesResponse,
     } = this.props;
     const {selectedAssignee} = this.state;
 
-    const hasMore = page <= totalPage;
+    console.log(repositoryIssuesResponse);
+
     return (
       <section>
         <section>
@@ -99,13 +108,25 @@ export class IssuesContainer extends React.PureComponent {
             onFetch={this.handleAssigneeFetch}
             value={selectedAssignee}
             isLoading={assignedPersonsResponse.isLoading}
-            hasMore={hasMore}
+            hasMore={this.hasMore(assignedPersonsResponse)}
           />
         </section>
         <section>
-          {
-            repositoryIssuesResponse.data.map(x => <IssueItem key={x.id} issue={x}/>)
-          }
+          <InfiniteScroll
+            dataLength={repositoryIssuesResponse.data.length}
+            loader={<h4>Loading...</h4>}
+            next={this.handleLoadRepositoryIssues}
+            hasMore={this.hasMore(repositoryIssuesResponse)}
+            endMessage={
+              <p style={{textAlign: 'center'}}>
+                end of data
+              </p>
+            }
+          >
+            {
+              repositoryIssuesResponse.data.map(x => <IssueItem key={x.id} issue={x}/>)
+            }
+          </InfiniteScroll>
         </section>
       </section>
     );

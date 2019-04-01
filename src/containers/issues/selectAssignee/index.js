@@ -85,7 +85,12 @@ export class SelectAssignee extends React.PureComponent {
           <button onClick={this.handleOpen}>
             {value ? this.renderSelectedValue(value) : this.renderPlaceholder()}
           </button>
-          <Button onClick={this.handleClear}>clear</Button>
+          <Button
+            onClick={this.handleClear}
+            disabled={!value}
+          >
+            clear
+          </Button>
         </section>
         {
           isOpen && this.renderList()
