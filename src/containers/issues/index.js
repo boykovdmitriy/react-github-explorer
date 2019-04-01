@@ -65,7 +65,7 @@ export class IssuesContainer extends React.PureComponent {
       assignedPersonsResponse: {params}
     } = this.props;
     fetchAssignedPersons({
-      owner, repo, params: {page: params.params.page + 1}
+      owner, repo, params: {page: params.page + 1}
     });
   };
 
@@ -77,7 +77,7 @@ export class IssuesContainer extends React.PureComponent {
       assignedPersonsResponse,
       assignedPersonsResponse: {
         params: {
-          params: {page} = {page: 1}
+          page = {page: 1}
         },
         totalPage,
       },

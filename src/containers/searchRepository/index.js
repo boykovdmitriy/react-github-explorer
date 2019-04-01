@@ -6,6 +6,7 @@ import {Input} from '../../components/input';
 import {Button} from '../../components/button';
 import {repositoriesActions} from '../../redux/repositories';
 import {RepositoryItem} from './repositoryItem';
+import {Pagination} from '../../components/pagination';
 
 const mapStateToProps = (state) => ({
   repositoriesSearchResponse: state.searchRepositories,
@@ -18,15 +19,17 @@ const mapDispatchToProps = {
 class SearchRepositoryContainer extends React.PureComponent {
   constructor(props) {
     super(props);
+    const {repositoriesSearchResponse: {params: {q}}} = props;
+
     this.throttledFetchRepositories = debounce(this.fetchRepositories, 600);
     this.state = {
-      query: '',
+      query: q || '',
     }
   }
 
-  fetchRepositories = (query) => {
+  fetchRepositories = (query, page = 1) => {
     const {searchRepositoriesRequest} = this.props;
-    searchRepositoriesRequest({params: {q: query, page: 1}});
+    searchRepositoriesRequest({params: {q: query, page}});
   };
 
   queryChanged = ({target: {value}}) => {
@@ -37,9 +40,22 @@ class SearchRepositoryContainer extends React.PureComponent {
     })
   };
 
+  handlePageChanged = (page) => {
+    const {query} = this.state;
+    this.fetchRepositories(query, page);
+  };
+
   render() {
     const {query} = this.state;
-    const {repositoriesSearchResponse: {isLoading, data: {items = []}}} = this.props;
+    const {
+      repositoriesSearchResponse: {
+        isLoading,
+        isLoaded,
+        data: {items = []},
+        totalPages,
+        params: {page}
+      }
+    } = this.props;
     return (
       <section>
         <section>
@@ -56,6 +72,15 @@ class SearchRepositoryContainer extends React.PureComponent {
             items.map(x => <RepositoryItem key={x.id} repository={x}/>)
           }
         </section>
+        {
+          isLoaded && (
+            <Pagination
+              total={totalPages}
+              current={page}
+              onSelect={this.handlePageChanged}
+            />
+          )
+        }
       </section>
     );
   }

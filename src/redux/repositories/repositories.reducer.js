@@ -5,7 +5,6 @@ const initialObjectState = {
   isError: false,
   isLoading: false,
   isLoaded: false,
-  loadedPages: 0,
   data: {},
   params: {},
 };
@@ -15,7 +14,6 @@ const initialArrayState = {
   isError: false,
   isLoading: false,
   isLoaded: false,
-  loadedPages: 0,
   data: [],
   params: {}
 };
@@ -29,7 +27,6 @@ export const searchRepositoriesReducer = (state = initialObjectState, action) =>
         params: params,
         isError: false,
         isLoading: true,
-        isLoaded: false,
       };
     case repositoriesActions.SEARCH_REPOSITORY.SUCCESS:
       const {payload: {data}} = action;
@@ -37,7 +34,7 @@ export const searchRepositoriesReducer = (state = initialObjectState, action) =>
       return {
         ...state,
         data: action.payload.data,
-        totalPage: Math.ceil(data.total_count / 30),
+        totalPages: Math.ceil(data.total_count / 30),
         isError: false,
         isLoading: false,
         isLoaded: true,
@@ -70,7 +67,7 @@ export const indexRepositoryIssuesReducer = (state = initialArrayState, action) 
       return {
         ...state,
         data: action.payload.data,
-        totalPage: calculateTotal(links),
+        totalPages: calculateTotal(links),
         isError: false,
         isLoading: false,
         isLoaded: true,
@@ -92,7 +89,7 @@ export const indexAssignedPersonsReducer = (state = initialArrayState, action) =
     case repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.REQUEST:
       return {
         ...state,
-        params: action.payload,
+        params: action.payload.params,
         isError: false,
         isLoading: true,
         isLoaded: false,
@@ -103,7 +100,7 @@ export const indexAssignedPersonsReducer = (state = initialArrayState, action) =
       return {
         ...state,
         data: page === 1 ? action.payload.data : [...state.data, ...action.payload.data],
-        totalPage: calculateTotal(links),
+        totalPages: calculateTotal(links),
         isError: false,
         isLoading: false,
         isLoaded: true,
