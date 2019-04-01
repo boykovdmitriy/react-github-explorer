@@ -7,6 +7,7 @@ import {ROOT} from '../../routes';
 import './issues.scss';
 import {IssueItem} from './issueItem';
 import {SelectAssignee} from './selectAssignee';
+import {Button} from '../../components/button';
 
 const mapStateToProps = (state) => ({
   assignedPersonsResponse: state.indexAssignedPersons,
@@ -29,7 +30,7 @@ export class IssuesContainer extends React.PureComponent {
     fetchIssues({owner, repo, params: {page: 1}});
   }
 
-  filterListByAssignee = (assignee, page) => {
+  filterListByAssignee = (assignee, page = 1) => {
     const {match: {params: {owner, repo}}, fetchIssues} = this.props;
     if (assignee) {
       fetchIssues({
@@ -49,8 +50,7 @@ export class IssuesContainer extends React.PureComponent {
     this.setState({
       selectedAssignee: assignee,
     }, () => {
-      const {repositoryIssuesResponse: {params: {page}}} = this.props;
-      this.filterListByAssignee(assignee, page + 1);
+      this.filterListByAssignee(assignee);
     });
   };
 
@@ -83,25 +83,57 @@ export class IssuesContainer extends React.PureComponent {
     return page < totalPages;
   };
 
+  renderListOfIssues = () => {
+    const {
+      repositoryIssuesResponse,
+      repositoryIssuesResponse: {
+        data, isLoaded
+      },
+    } = this.props;
+
+    if (isLoaded && data.length === 0) {
+      return (<span>Issues not found</span>);
+    }
+    if (!isLoaded) {
+      return (<span>...Loading</span>);
+    }
+
+    return (
+      <InfiniteScroll
+        dataLength={data.length}
+        loader={<h4>Loading...</h4>}
+        next={this.handleLoadRepositoryIssues}
+        hasMore={this.hasMore(repositoryIssuesResponse)}
+        endMessage={
+          <p style={{textAlign: 'center'}}>
+            end of data
+          </p>
+        }
+      >
+        {
+          data
+            .map(x => <IssueItem key={x.id} issue={x}/>)
+        }
+      </InfiniteScroll>
+    );
+  };
+
   render() {
     const {
       match: {
         params: {repo}
       },
       assignedPersonsResponse,
-      repositoryIssuesResponse,
     } = this.props;
     const {selectedAssignee} = this.state;
 
-    console.log(repositoryIssuesResponse);
-
     return (
-      <section>
-        <section>
-          <Link to={ROOT.url()}>Back</Link>
-          <h1>{repo}</h1>
-        </section>
-        <section>
+      <section className="issues">
+        <header className="issues__header">
+          <Button size='sm' component={Link} to={ROOT.url()}>Back</Button>
+          <h1 className="issues__repo-name">{repo}</h1>
+        </header>
+        <section className="issues__filter">
           <SelectAssignee
             items={assignedPersonsResponse.data}
             onSelect={this.handleSelect}
@@ -112,21 +144,7 @@ export class IssuesContainer extends React.PureComponent {
           />
         </section>
         <section>
-          <InfiniteScroll
-            dataLength={repositoryIssuesResponse.data.length}
-            loader={<h4>Loading...</h4>}
-            next={this.handleLoadRepositoryIssues}
-            hasMore={this.hasMore(repositoryIssuesResponse)}
-            endMessage={
-              <p style={{textAlign: 'center'}}>
-                end of data
-              </p>
-            }
-          >
-            {
-              repositoryIssuesResponse.data.map(x => <IssueItem key={x.id} issue={x}/>)
-            }
-          </InfiniteScroll>
+          {this.renderListOfIssues()}
         </section>
       </section>
     );

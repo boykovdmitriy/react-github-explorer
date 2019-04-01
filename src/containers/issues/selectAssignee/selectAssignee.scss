@@ -1,16 +1,29 @@
 .select-assignee {
+  position: relative;
 
   &__value {
+    border: none;
+    border-bottom: 1px solid gray;
+    padding-bottom: .2rem;
+    width: 10rem;
+    height: 2rem;
+  }
+
+  &__select-container {
 
   }
 
   &__list {
-    width: 150px;
+    position: absolute;
+    width: 10rem;
+    top: 0;
+    background: white;
+    box-shadow: 0 0 13px 2px rgba(0, 0, 0, 0.75);
   }
 
   &__item {
     background: transparent;
     border: none;
-    width: 100px;
+    width: 100%;
   }
 }

@@ -6,13 +6,14 @@ export const Button = ({
                          onClick,
                          className = 'custom_button',
                          children,
+                         size = 'default',
                          type = 'button',
                          component: Component = 'button',
                          ...restProps
                        }) => (
   <Component
     type={type}
-    className={cx(className)}
+    className={cx(className, `${className}--size-${size}`)}
     onClick={onClick}
     {...restProps}
   >

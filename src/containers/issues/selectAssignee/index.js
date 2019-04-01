@@ -59,12 +59,7 @@ export class SelectAssignee extends React.PureComponent {
           next={onFetch}
           hasMore={hasMore}
           loader={<h4>Loading...</h4>}
-          height={400}
-          endMessage={
-            <p style={{textAlign: 'center'}}>
-              no other data
-            </p>
-          }
+          height={200}
         >
           {
             items.map(this.renderItem)
@@ -81,11 +76,15 @@ export class SelectAssignee extends React.PureComponent {
 
     return (
       <section className="select-assignee">
-        <section className="select-assignee__value">
-          <button onClick={this.handleOpen}>
+        <section className="select-assignee__select-container">
+          <button
+            className="select-assignee__value"
+            onClick={this.handleOpen}
+          >
             {value ? this.renderSelectedValue(value) : this.renderPlaceholder()}
           </button>
           <Button
+            size='sm'
             onClick={this.handleClear}
             disabled={!value}
           >

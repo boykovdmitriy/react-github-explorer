@@ -1,0 +1,16 @@
+.issues {
+
+  &__header {
+    padding: 1rem .5rem;
+    display: flex;
+  }
+
+  &__repo-name {
+    margin-left: .5rem;
+  }
+
+  &__filter {
+    margin-left: 1.5rem;
+  }
+
+}

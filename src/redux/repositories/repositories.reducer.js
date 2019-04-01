@@ -61,14 +61,16 @@ export const indexRepositoryIssuesReducer = (state = initialArrayState, action) 
         params: params,
         isError: false,
         isLoading: true,
-        isLoaded: false,
+        isLoaded: params.page !== 1,
       };
     case repositoriesActions.GET_REPOSITORY_ISSUES.SUCCESS:
       const links = action.payload.raw.headers.get('Link');
+      const {params: {page}} = state;
+      const totalPages = page === 1 ? calculateTotal(links) : state.totalPages;
       return {
         ...state,
         data: [...state.data, ...action.payload.data],
-        totalPages: calculateTotal(links),
+        totalPages,
         isError: false,
         isLoading: false,
         isLoaded: true,
@@ -98,10 +100,11 @@ export const indexAssignedPersonsReducer = (state = initialArrayState, action) =
     case repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.SUCCESS:
       const links = action.payload.raw.headers.get('Link');
       const {params: {page}} = state;
+      const totalPages = page === 1 ? calculateTotal(links) : state.totalPages;
       return {
         ...state,
         data: page === 1 ? action.payload.data : [...state.data, ...action.payload.data],
-        totalPages: calculateTotal(links),
+        totalPages,
         isError: false,
         isLoading: false,
         isLoaded: true,
