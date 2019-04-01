@@ -37,7 +37,6 @@ export function apiFetch(path, customOptions) {
   options.headers.append('Accept', 'application/json, text/plain, */*');
   return timeoutPromise(
     FETCH_TIMEOUT,
-    // @ts-ignore: ts offers to import Error from material UI, but it's wrong
     new Error('Server timeout'),
     fetch(fetchUrl, options))
     .then(checkStatus)

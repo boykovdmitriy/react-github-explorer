@@ -4,10 +4,11 @@ import {connect} from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {repositoriesActions} from '../../redux/repositories';
 import {ROOT} from '../../routes';
-import './issues.scss';
 import {IssueItem} from './issueItem';
 import {SelectAssignee} from './selectAssignee';
 import {Button} from '../../components/button';
+
+import './issues.scss';
 
 const mapStateToProps = (state) => ({
   assignedPersonsResponse: state.indexAssignedPersons,
@@ -38,7 +39,7 @@ export class IssuesContainer extends React.PureComponent {
         repo,
         params: {
           page,
-          assignee: assignee && assignee.login
+          assignee: assignee.login
         }
       });
       return;
@@ -54,7 +55,7 @@ export class IssuesContainer extends React.PureComponent {
     });
   };
 
-  handleAssigneeFetch = () => {
+  handleLoadMoreAssignee = () => {
     const {
       match: {params: {owner, repo}},
       fetchAssignedPersons,
@@ -137,7 +138,7 @@ export class IssuesContainer extends React.PureComponent {
           <SelectAssignee
             items={assignedPersonsResponse.data}
             onSelect={this.handleSelect}
-            onFetch={this.handleAssigneeFetch}
+            onFetch={this.handleLoadMoreAssignee}
             value={selectedAssignee}
             isLoading={assignedPersonsResponse.isLoading}
             hasMore={this.hasMore(assignedPersonsResponse)}
