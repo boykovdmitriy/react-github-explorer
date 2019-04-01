@@ -11,17 +11,19 @@ export class App extends Component {
   render() {
     return (
       <div className="app">
-        <Switch>
-          <Route
-            path={ROOT.url()}
-            exact
-            component={SearchRepository}
-          />
-          <Route
-            component={Issues}
-            path={REPOSITORY_ISSUES.url()}
-          />
-        </Switch>
+        <section className="app__container">
+          <Switch>
+            <Route
+              path={ROOT.url()}
+              exact
+              component={SearchRepository}
+            />
+            <Route
+              component={Issues}
+              path={REPOSITORY_ISSUES.url()}
+            />
+          </Switch>
+        </section>
       </div>
     );
   }

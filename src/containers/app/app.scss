@@ -1,2 +1,11 @@
 .app {
+  display: flex;
+  justify-content: center;
+  background: #daeeff;
+  width: 100vw;
+  min-height: 100vh;
+
+  &__container {
+    width: 70%;
+  }
 }

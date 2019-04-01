@@ -3,22 +3,16 @@ import cx from 'classnames';
 import './Button.scss';
 
 export const Button = ({
-  styleType = 'default',
-  onClick,
-  className = 'custom_button',
-  children,
-  type = 'button',
-  size = 'default',
-  component: Component = 'button',
-  ...restProps
-}) => (
+                         onClick,
+                         className = 'custom_button',
+                         children,
+                         type = 'button',
+                         component: Component = 'button',
+                         ...restProps
+                       }) => (
   <Component
     type={type}
-    className={cx(
-      className,
-      `${className}--${styleType}`,
-      `${className}--size-${size}`,
-    )}
+    className={cx(className)}
     onClick={onClick}
     {...restProps}
   >

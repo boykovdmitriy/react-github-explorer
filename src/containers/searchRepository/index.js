@@ -3,7 +3,7 @@ import {debounce} from 'lodash'
 import {connect} from 'react-redux';
 import './searchRepository.scss';
 import {Input} from '../../components/input';
-import {Button} from '../../components/button';
+import {Spinner} from '../../components/spinner';
 import {repositoriesActions} from '../../redux/repositories';
 import {RepositoryItem} from './repositoryItem';
 import {Pagination} from '../../components/pagination';
@@ -43,6 +43,7 @@ class SearchRepositoryContainer extends React.PureComponent {
   handlePageChanged = (page) => {
     const {query} = this.state;
     this.fetchRepositories(query, page);
+    window.scrollTo(0, 0);
   };
 
   render() {
@@ -57,30 +58,39 @@ class SearchRepositoryContainer extends React.PureComponent {
       }
     } = this.props;
     return (
-      <section>
-        <section>
-          <Input
-            type='text'
-            onChange={this.queryChanged}
-            value={query}
-          />
-          <Button>search</Button>
-        </section>
-        <section>
-          {isLoading && 'loading'}
-          {
-            items.map(x => <RepositoryItem key={x.id} repository={x}/>)
-          }
-        </section>
-        {
-          isLoaded && (
-            <Pagination
-              total={totalPages}
-              current={page}
-              onSelect={this.handlePageChanged}
+      <section
+        className="search-repository"
+      >
+        <section className="search-repository__container">
+          <section className="search-repository__search">
+            <Input
+              type='text'
+              onChange={this.queryChanged}
+              value={query}
+              placeholder="Type a repository name"
             />
-          )
-        }
+          </section>
+          <section className="search-repository__list">
+            <Spinner
+              isLoading={isLoading}
+            >
+              {
+                items.map(x => <RepositoryItem key={x.id} repository={x}/>)
+              }
+            </Spinner>
+          </section>
+          <section className="search-repository__list-pagination">
+            {
+              isLoaded && (
+                <Pagination
+                  total={totalPages}
+                  current={page}
+                  onSelect={this.handlePageChanged}
+                />
+              )
+            }
+          </section>
+        </section>
       </section>
     );
   }

@@ -1,0 +1,28 @@
+.search-repository {
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  background: white;
+  box-shadow: 0 0 13px 2px rgba(0, 0, 0, 0.75);
+  min-height: 100%;
+
+  &__container {
+    width: 400px;
+  }
+
+  &__search {
+    padding: 2rem 0;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__list-pagination {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: .5rem;
+  }
+}
