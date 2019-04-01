@@ -7,6 +7,7 @@ const initialObjectState = {
   isLoaded: false,
   loadedPages: 0,
   data: {},
+  params: {},
 };
 
 const initialArrayState = {
@@ -16,6 +17,7 @@ const initialArrayState = {
   isLoaded: false,
   loadedPages: 0,
   data: [],
+  params: {}
 };
 
 export const searchRepositoriesReducer = (state = initialObjectState, action) => {

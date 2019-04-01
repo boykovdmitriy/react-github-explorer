@@ -6,7 +6,7 @@ import {toParams} from '../../utils/params';
 export const urls = {
   index: (payload) => `search/repositories${toParams(payload.params)}`,
   getRepositoryIssues: ({owner, repo, params}) => `repos/${owner}/${repo}/issues${toParams(params)}`,
-  getAssignedToRRepositoryIssuesRepositoryIssues: ({owner, repo}) => `repos/${owner}/${repo}/assignees`,
+  getAssignedToRepositoryIssuesRepositoryIssues: ({owner, repo, params}) => `repos/${owner}/${repo}/assignees${toParams(params)}`,
 };
 
 export function* repositoriesSaga() {
@@ -21,7 +21,7 @@ export function* repositoriesSaga() {
     }),
     defRequestSaga(
       repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS,
-      urls.getAssignedToRRepositoryIssuesRepositoryIssues,
+      urls.getAssignedToRepositoryIssuesRepositoryIssues,
       {method: 'GET', apiHost: 'https://api.github.com'}
     ),
   ]);

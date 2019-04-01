@@ -18,18 +18,55 @@ const mapDispatchToProps = {
 };
 
 export class IssuesContainer extends React.PureComponent {
+  state = {
+    selectedAssignee: null,
+  };
+
   componentDidMount() {
     const {match: {params: {owner, repo}}, fetchIssues, fetchAssignedPersons} = this.props;
     fetchAssignedPersons({owner, repo, params: {page: 1}});
     fetchIssues({owner, repo, params: {page: 1}});
   }
 
-  handleSelect = () => {
+  filterListByAssignee = (assignee) => {
+    const {match: {params: {owner, repo}}, fetchIssues} = this.props;
+    if (assignee) {
+      fetchIssues({
+        owner,
+        repo,
+        params: {
+          page: 1,
+          assignee: assignee && assignee.login
+        }
+      });
+      return;
+    }
+    fetchIssues({
+      owner,
+      repo,
+      params: {
+        page: 1,
+      }
+    });
+  };
 
+  handleSelect = (assignee) => {
+    this.setState({
+      selectedAssignee: assignee,
+    }, () => {
+      this.filterListByAssignee(assignee);
+    });
   };
 
   handleAssigneeFetch = () => {
-
+    const {
+      match: {params: {owner, repo}},
+      fetchAssignedPersons,
+      assignedPersonsResponse: {params}
+    } = this.props;
+    fetchAssignedPersons({
+      owner, repo, params: {page: params.params.page + 1}
+    });
   };
 
   render() {
@@ -38,10 +75,17 @@ export class IssuesContainer extends React.PureComponent {
         params: {repo}
       },
       assignedPersonsResponse,
+      assignedPersonsResponse: {
+        params: {
+          params: {page} = {page: 1}
+        },
+        totalPage,
+      },
       repositoryIssuesResponse,
     } = this.props;
+    const {selectedAssignee} = this.state;
 
-    console.log(repositoryIssuesResponse.data.map(issue => issue.assignees));
+    const hasMore = page <= totalPage;
     return (
       <section>
         <section>
@@ -53,7 +97,9 @@ export class IssuesContainer extends React.PureComponent {
             items={assignedPersonsResponse.data}
             onSelect={this.handleSelect}
             onFetch={this.handleAssigneeFetch}
-            hasMore
+            value={selectedAssignee}
+            isLoading={assignedPersonsResponse.isLoading}
+            hasMore={hasMore}
           />
         </section>
         <section>

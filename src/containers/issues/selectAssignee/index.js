@@ -1,6 +1,7 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Button} from '../../../components/button';
+import './selectAssignee.scss';
 
 export class SelectAssignee extends React.PureComponent {
   state = {
@@ -36,19 +37,23 @@ export class SelectAssignee extends React.PureComponent {
     return (<section>{value.login}</section>)
   }
 
-  renderItem(item) {
+  renderItem = (item) => {
     return (
-      <button key={item.id} onClick={this.handleSelect}>
+      <button
+        key={item.id}
+        className="select-assignee__item"
+        onClick={() => this.handleSelect(item)}
+      >
         {item.login}
       </button>
     )
-  }
+  };
 
   renderList() {
     const {items, onFetch, hasMore = true} = this.props;
 
     return (
-      <section>
+      <section className="select-assignee__list">
         <InfiniteScroll
           dataLength={items.length}
           next={onFetch}
@@ -57,11 +62,12 @@ export class SelectAssignee extends React.PureComponent {
           height={400}
           endMessage={
             <p style={{textAlign: 'center'}}>
-              <b>Yay! You have seen it all</b>
+              no other data
             </p>
-          }>
+          }
+        >
           {
-            items.map(x => this.renderItem(x))
+            items.map(this.renderItem)
           }
         </InfiniteScroll>
       </section>
@@ -74,8 +80,8 @@ export class SelectAssignee extends React.PureComponent {
     const {isOpen} = this.state;
 
     return (
-      <section>
-        <section>
+      <section className="select-assignee">
+        <section className="select-assignee__value">
           <button onClick={this.handleOpen}>
             {value ? this.renderSelectedValue(value) : this.renderPlaceholder()}
           </button>
