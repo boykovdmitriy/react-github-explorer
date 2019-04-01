@@ -88,19 +88,19 @@ export const indexRepositoryIssuesReducer = (state = initialArrayState, action) 
 export const indexAssignedPersonsReducer = (state = initialArrayState, action) => {
   switch (action.type) {
     case repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.REQUEST:
-      const {payload: {params}} = action;
       return {
         ...state,
-        params: params,
+        params: action.payload,
         isError: false,
         isLoading: true,
         isLoaded: false,
       };
     case repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.SUCCESS:
       const links = action.payload.raw.headers.get('Link');
+      const {params: {page}} = state;
       return {
         ...state,
-        data: action.payload.data,
+        data: page === 1 ? action.payload.data : [...state.data, ...action.payload.data],
         totalPage: calculateTotal(links),
         isError: false,
         isLoading: false,

@@ -5,6 +5,7 @@ import {repositoriesActions} from '../../redux/repositories';
 import {ROOT} from '../../routes';
 import './issues.scss';
 import {IssueItem} from './issueItem';
+import {SelectAssignee} from './selectAssignee';
 
 const mapStateToProps = (state) => ({
   assignedPersonsResponse: state.indexAssignedPersons,
@@ -19,9 +20,17 @@ const mapDispatchToProps = {
 export class IssuesContainer extends React.PureComponent {
   componentDidMount() {
     const {match: {params: {owner, repo}}, fetchIssues, fetchAssignedPersons} = this.props;
-    fetchAssignedPersons({owner, repo});
+    fetchAssignedPersons({owner, repo, params: {page: 1}});
     fetchIssues({owner, repo, params: {page: 1}});
   }
+
+  handleSelect = () => {
+
+  };
+
+  handleAssigneeFetch = () => {
+
+  };
 
   render() {
     const {
@@ -38,6 +47,14 @@ export class IssuesContainer extends React.PureComponent {
         <section>
           <Link to={ROOT.url()}>Back</Link>
           <h1>{repo}</h1>
+        </section>
+        <section>
+          <SelectAssignee
+            items={assignedPersonsResponse.data}
+            onSelect={this.handleSelect}
+            onFetch={this.handleAssigneeFetch}
+            hasMore
+          />
         </section>
         <section>
           {
