@@ -7,8 +7,11 @@ import {ROOT} from '../../routes';
 import {IssueItem} from './issueItem';
 import {SelectAssignee} from './selectAssignee';
 import {Button} from '../../components/button';
+import {hasMorePages} from '../../utils/hasMore';
 
 import './issues.scss';
+import {InfiniteScrollEndMessage} from '../../components/infiniteScrollEndMessage';
+import {Spinner} from '../../components/spinner';
 
 const mapStateToProps = (state) => ({
   assignedPersonsResponse: state.indexAssignedPersons,
@@ -73,43 +76,26 @@ export class IssuesContainer extends React.PureComponent {
     this.filterListByAssignee(selectedAssignee, page + 1);
   };
 
-  hasMore = (storeField) => {
-    const {
-      params: {
-        page = {page: 1}
-      },
-      totalPages,
-    } = storeField;
-
-    return page < totalPages;
-  };
-
   renderListOfIssues = () => {
     const {
       repositoryIssuesResponse,
       repositoryIssuesResponse: {
-        data, isLoaded
+        data, isLoading
       },
     } = this.props;
-
-    if (isLoaded && data.length === 0) {
-      return (<span>Issues not found</span>);
-    }
-    if (!isLoaded) {
-      return (<span>...Loading</span>);
-    }
 
     return (
       <InfiniteScroll
         dataLength={data.length}
-        loader={<h4>Loading...</h4>}
+        loader={<Spinner/>}
         next={this.handleLoadRepositoryIssues}
-        hasMore={this.hasMore(repositoryIssuesResponse)}
-        endMessage={
-          <p style={{textAlign: 'center'}}>
-            end of data
-          </p>
-        }
+        hasMore={hasMorePages(repositoryIssuesResponse)}
+        endMessage={(
+          <InfiniteScrollEndMessage
+            isLoading={isLoading}
+            hasData={data.length > 0}
+          />
+        )}
       >
         {
           data
@@ -141,7 +127,7 @@ export class IssuesContainer extends React.PureComponent {
             onFetch={this.handleLoadMoreAssignee}
             value={selectedAssignee}
             isLoading={assignedPersonsResponse.isLoading}
-            hasMore={this.hasMore(assignedPersonsResponse)}
+            hasMore={hasMorePages(assignedPersonsResponse)}
           />
         </section>
         <section>

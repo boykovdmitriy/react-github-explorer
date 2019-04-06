@@ -5,7 +5,7 @@ const initialState = {
   isError: false,
   isLoading: false,
   isLoaded: false,
-  data: {},
+  data: [],
   params: {},
 };
 
@@ -15,8 +15,10 @@ export const searchRepositoriesReducer = (state = initialState, action) => {
       const {payload: {params}} = action;
       return {
         ...state,
+        data: params.page === 1 ? [] : state.data,
         params: params,
         isError: false,
+        isLoaded: false,
         isLoading: true,
       };
     case repositoriesActions.SEARCH_REPOSITORY.SUCCESS:
@@ -24,7 +26,7 @@ export const searchRepositoriesReducer = (state = initialState, action) => {
 
       return {
         ...state,
-        data: action.payload.data,
+        data: [...state.data, ...data.items],
         totalPages: Math.ceil(data.total_count / 30),
         isError: false,
         isLoading: false,

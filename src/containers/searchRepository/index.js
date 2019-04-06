@@ -1,12 +1,15 @@
 import React from 'react';
-import {debounce} from 'lodash'
+import {debounce, isEmpty} from 'lodash'
 import {connect} from 'react-redux';
-import './searchRepository.scss';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {Input} from '../../components/input';
-import {Spinner} from '../../components/spinner';
 import {repositoriesActions} from '../../redux/repositories';
 import {RepositoryItem} from './repositoryItem';
-import {Pagination} from '../../components/pagination';
+import {hasMorePages} from '../../utils/hasMore';
+
+import './searchRepository.scss';
+import {Spinner} from '../../components/spinner';
+import {InfiniteScrollEndMessage} from '../../components/infiniteScrollEndMessage';
 
 const mapStateToProps = (state) => ({
   repositoriesSearchResponse: state.searchRepositories,
@@ -29,7 +32,13 @@ class SearchRepositoryContainer extends React.PureComponent {
 
   fetchRepositories = (query, page = 1) => {
     const {searchRepositoriesRequest} = this.props;
-    searchRepositoriesRequest({params: {q: query, page}});
+    const params = {page};
+
+    if (!isEmpty(query)) {
+      params.q = query;
+    }
+
+    searchRepositoriesRequest({params});
   };
 
   queryChanged = ({target: {value}}) => {
@@ -37,29 +46,22 @@ class SearchRepositoryContainer extends React.PureComponent {
       query: value,
     }, () => {
       this.throttledFetchRepositories(value);
-    })
+    });
   };
 
-  handlePageChanged = (page) => {
+  handleLoadMoreRepositories = () => {
+    const {
+      repositoriesSearchResponse: {params: {page}}
+    } = this.props;
     const {query} = this.state;
-    this.fetchRepositories(query, page);
-    window.scrollTo(0, 0);
+    this.fetchRepositories(query, page + 1);
   };
 
   render() {
     const {query} = this.state;
-    const {
-      repositoriesSearchResponse: {
-        isLoading,
-        data: {items = []},
-        totalPages,
-        params: {page}
-      }
-    } = this.props;
+    const {repositoriesSearchResponse} = this.props;
     return (
-      <section
-        className="search-repository"
-      >
+      <section className="search-repository">
         <section className="search-repository__container">
           <section className="search-repository__search">
             <Input
@@ -70,20 +72,24 @@ class SearchRepositoryContainer extends React.PureComponent {
             />
           </section>
           <section className="search-repository__list">
-            <Spinner
-              isLoading={isLoading}
+            <InfiniteScroll
+              dataLength={repositoriesSearchResponse.data.length}
+              loader={<Spinner/>}
+              next={this.handleLoadMoreRepositories}
+              hasMore={hasMorePages(repositoriesSearchResponse)}
+              endMessage={(
+                <InfiniteScrollEndMessage
+                  isLoading={repositoriesSearchResponse.isLoading}
+                  hasData={repositoriesSearchResponse.data.length > 0}
+                />
+              )}
             >
               {
-                items.map(x => <RepositoryItem key={x.id} repository={x}/>)
+                repositoriesSearchResponse
+                  .data
+                  .map(x => <RepositoryItem key={x.id} repository={x}/>)
               }
-              <section className="search-repository__list-pagination">
-                <Pagination
-                  total={totalPages}
-                  current={page}
-                  onSelect={this.handlePageChanged}
-                />
-              </section>
-            </Spinner>
+            </InfiniteScroll>
           </section>
         </section>
       </section>

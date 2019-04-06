@@ -1,6 +1,8 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Button} from '../../../components/button';
+import {Spinner} from '../../../components/spinner';
+
 import './selectAssignee.scss';
 
 export class SelectAssignee extends React.PureComponent {
@@ -58,7 +60,7 @@ export class SelectAssignee extends React.PureComponent {
           dataLength={items.length}
           next={onFetch}
           hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
+          loader={<Spinner />}
           height={200}
         >
           {
