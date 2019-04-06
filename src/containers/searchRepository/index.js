@@ -51,7 +51,6 @@ class SearchRepositoryContainer extends React.PureComponent {
     const {
       repositoriesSearchResponse: {
         isLoading,
-        isLoaded,
         data: {items = []},
         totalPages,
         params: {page}
@@ -77,18 +76,14 @@ class SearchRepositoryContainer extends React.PureComponent {
               {
                 items.map(x => <RepositoryItem key={x.id} repository={x}/>)
               }
-            </Spinner>
-          </section>
-          <section className="search-repository__list-pagination">
-            {
-              isLoaded && (
+              <section className="search-repository__list-pagination">
                 <Pagination
                   total={totalPages}
                   current={page}
                   onSelect={this.handlePageChanged}
                 />
-              )
-            }
+              </section>
+            </Spinner>
           </section>
         </section>
       </section>

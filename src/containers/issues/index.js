@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {repositoriesActions} from '../../redux/repositories';
+import {issuesActions} from '../../redux/issues';
 import {ROOT} from '../../routes';
 import {IssueItem} from './issueItem';
 import {SelectAssignee} from './selectAssignee';
@@ -16,8 +16,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  fetchAssignedPersons: repositoriesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.request,
-  fetchIssues: repositoriesActions.GET_REPOSITORY_ISSUES.request,
+  fetchAssignedPersons: issuesActions.GET_ASSIGNED_TO_ISSUES_PERSONS.request,
+  fetchIssues: issuesActions.GET_REPOSITORY_ISSUES.request,
 };
 
 export class IssuesContainer extends React.PureComponent {
