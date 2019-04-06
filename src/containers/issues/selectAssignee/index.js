@@ -1,11 +1,12 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import onClickOutside from 'react-onclickoutside';
 import {Button} from '../../../components/button';
 import {Spinner} from '../../../components/spinner';
 
 import './selectAssignee.scss';
 
-export class SelectAssignee extends React.PureComponent {
+class SelectAssigneeComponent extends React.PureComponent {
   state = {
     isOpen: false,
   };
@@ -13,6 +14,10 @@ export class SelectAssignee extends React.PureComponent {
   handleSelect = (item) => {
     const {onSelect} = this.props;
     onSelect(item);
+    this.handleClose();
+  };
+
+  handleClickOutside = () => {
     this.handleClose();
   };
 
@@ -60,7 +65,7 @@ export class SelectAssignee extends React.PureComponent {
           dataLength={items.length}
           next={onFetch}
           hasMore={hasMore}
-          loader={<Spinner />}
+          loader={<Spinner/>}
           height={200}
         >
           {
@@ -100,3 +105,5 @@ export class SelectAssignee extends React.PureComponent {
     )
   }
 }
+
+export const SelectAssignee = onClickOutside(SelectAssigneeComponent);

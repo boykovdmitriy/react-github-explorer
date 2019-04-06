@@ -1,17 +1,14 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import {issuesActions} from '../../redux/issues';
 import {ROOT} from '../../routes';
-import {IssueItem} from './issueItem';
 import {SelectAssignee} from './selectAssignee';
 import {Button} from '../../components/button';
 import {hasMorePages} from '../../utils/hasMore';
+import {IssueList} from './issueList';
 
 import './issues.scss';
-import {InfiniteScrollEndMessage} from '../../components/infiniteScrollEndMessage';
-import {Spinner} from '../../components/spinner';
 
 const mapStateToProps = (state) => ({
   assignedPersonsResponse: state.indexAssignedPersons,
@@ -23,18 +20,18 @@ const mapDispatchToProps = {
   fetchIssues: issuesActions.GET_REPOSITORY_ISSUES.request,
 };
 
-export class IssuesContainer extends React.PureComponent {
+class IssuesContainer extends React.PureComponent {
   state = {
     selectedAssignee: null,
   };
 
   componentDidMount() {
-    const {match: {params: {owner, repo}}, fetchIssues, fetchAssignedPersons} = this.props;
+    const {match: {params: {owner, repo}}, fetchAssignedPersons} = this.props;
     fetchAssignedPersons({owner, repo, params: {page: 1}});
-    fetchIssues({owner, repo, params: {page: 1}});
+    this.loadFilteredListOfIssues();
   }
 
-  filterListByAssignee = (assignee, page = 1) => {
+  loadFilteredListOfIssues = ({assignee, page = 1} = {}) => {
     const {match: {params: {owner, repo}}, fetchIssues} = this.props;
     if (assignee) {
       fetchIssues({
@@ -54,7 +51,7 @@ export class IssuesContainer extends React.PureComponent {
     this.setState({
       selectedAssignee: assignee,
     }, () => {
-      this.filterListByAssignee(assignee);
+      this.loadFilteredListOfIssues({assignee});
     });
   };
 
@@ -73,36 +70,7 @@ export class IssuesContainer extends React.PureComponent {
     const {selectedAssignee} = this.props;
     const {repositoryIssuesResponse: {params: {page}}} = this.props;
 
-    this.filterListByAssignee(selectedAssignee, page + 1);
-  };
-
-  renderListOfIssues = () => {
-    const {
-      repositoryIssuesResponse,
-      repositoryIssuesResponse: {
-        data, isLoading
-      },
-    } = this.props;
-
-    return (
-      <InfiniteScroll
-        dataLength={data.length}
-        loader={<Spinner/>}
-        next={this.handleLoadRepositoryIssues}
-        hasMore={hasMorePages(repositoryIssuesResponse)}
-        endMessage={(
-          <InfiniteScrollEndMessage
-            isLoading={isLoading}
-            hasData={data.length > 0}
-          />
-        )}
-      >
-        {
-          data
-            .map(x => <IssueItem key={x.id} issue={x}/>)
-        }
-      </InfiniteScroll>
-    );
+    this.loadFilteredListOfIssues({assignee: selectedAssignee, page: page + 1});
   };
 
   render() {
@@ -110,6 +78,7 @@ export class IssuesContainer extends React.PureComponent {
       match: {
         params: {repo}
       },
+      repositoryIssuesResponse,
       assignedPersonsResponse,
     } = this.props;
     const {selectedAssignee} = this.state;
@@ -131,7 +100,10 @@ export class IssuesContainer extends React.PureComponent {
           />
         </section>
         <section>
-          {this.renderListOfIssues()}
+          <IssueList
+            repositoryIssuesResponse={repositoryIssuesResponse}
+            handleEndReached={this.handleLoadRepositoryIssues}
+          />
         </section>
       </section>
     );

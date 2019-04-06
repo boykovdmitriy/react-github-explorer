@@ -1,15 +1,11 @@
 import React from 'react';
 import {debounce, isEmpty} from 'lodash'
 import {connect} from 'react-redux';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import {Input} from '../../components/input';
 import {repositoriesActions} from '../../redux/repositories';
-import {RepositoryItem} from './repositoryItem';
-import {hasMorePages} from '../../utils/hasMore';
 
+import {RepositoryList} from './repositoryList';
 import './searchRepository.scss';
-import {Spinner} from '../../components/spinner';
-import {InfiniteScrollEndMessage} from '../../components/infiniteScrollEndMessage';
 
 const mapStateToProps = (state) => ({
   repositoriesSearchResponse: state.searchRepositories,
@@ -72,24 +68,10 @@ class SearchRepositoryContainer extends React.PureComponent {
             />
           </section>
           <section className="search-repository__list">
-            <InfiniteScroll
-              dataLength={repositoriesSearchResponse.data.length}
-              loader={<Spinner/>}
-              next={this.handleLoadMoreRepositories}
-              hasMore={hasMorePages(repositoriesSearchResponse)}
-              endMessage={(
-                <InfiniteScrollEndMessage
-                  isLoading={repositoriesSearchResponse.isLoading}
-                  hasData={repositoriesSearchResponse.data.length > 0}
-                />
-              )}
-            >
-              {
-                repositoriesSearchResponse
-                  .data
-                  .map(x => <RepositoryItem key={x.id} repository={x}/>)
-              }
-            </InfiniteScroll>
+            <RepositoryList
+              repositoriesSearchResponse={repositoriesSearchResponse}
+              handleEndReached={this.handleLoadMoreRepositories}
+            />
           </section>
         </section>
       </section>
